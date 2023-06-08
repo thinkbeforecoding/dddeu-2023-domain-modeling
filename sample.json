@@ -1,0 +1,93 @@
+[
+{
+    "command": {
+      "command_id": "2d4d2f44-f741-48df-b019-148c38d57417",
+      "created_at": "2023-06-08T09:19:48.199219Z",
+      "payload": {
+        "card_id": "x123"
+      },
+      "type": "CalculatePrice"
+    },
+    "history": [
+      {
+        "created_at": "2023-06-08T09:19:48.199199Z",
+        "event_id": "b12a0278-2786-4bbe-8870-44f3531ded82",
+        "payload": {
+          "address": "Point Dume",
+          "card_id": "x123",
+          "city": "Malibu",
+          "person_id": "Tony Stark"
+        },
+        "type": "IdCardRegistered"
+      },
+      {
+        "created_at": "2023-06-08T09:19:48.199204Z",
+        "event_id": "00592ab1-ad10-426a-ab10-0efdf7c4d7dc",
+        "payload": {
+          "card_id": "x123",
+          "date": "2023-02-10"
+        },
+        "type": "IdCardScannedAtEntranceGate"
+      },
+      {
+        "created_at": "2023-06-08T09:19:48.199208Z",
+        "event_id": "58ae7d94-5cae-411f-9ab9-ac3831ec81f0",
+        "payload": {
+          "card_id": "x123"
+        },
+        "type": "IdCardScannedAtExitGate"
+      }
+    ]
+  },
+
+  {
+    "command": {
+      "command_id": "75444759-fef5-4b8c-8f61-1697b4c589de",
+      "created_at": "2023-06-08T09:19:48.199255Z",
+      "payload": {
+        "card_id": "x123"
+      },
+      "type": "CalculatePrice"
+    },
+    "history": [
+      {
+        "created_at": "2023-06-08T09:19:48.199237Z",
+        "event_id": "9f3307eb-1614-40ae-8a15-8f96263e5de8",
+        "payload": {
+          "address": "Point Dume",
+          "card_id": "x123",
+          "city": "Malibu",
+          "person_id": "Tony Stark"
+        },
+        "type": "IdCardRegistered"
+      },
+      {
+        "created_at": "2023-06-08T09:19:48.199242Z",
+        "event_id": "9de04c3b-af90-4663-9c50-e76776bfd8e9",
+        "payload": {
+          "card_id": "x123",
+          "date": "2023-02-10"
+        },
+        "type": "IdCardScannedAtEntranceGate"
+      },
+      {
+        "created_at": "2023-06-08T09:19:48.199246Z",
+        "event_id": "6acc79f0-677d-43d2-b7d6-bb31e88b7e5a",
+        "payload": {
+          "card_id": "x123",
+          "fraction_type": "Construction waste",
+          "weight": 71
+        },
+        "type": "FractionWasDropped"
+      },
+      {
+        "created_at": "2023-06-08T09:19:48.199251Z",
+        "event_id": "1098945b-19f8-4567-8b9e-5dd118b58cae",
+        "payload": {
+          "card_id": "x123"
+        },
+        "type": "IdCardScannedAtExitGate"
+      }
+    ]
+  }
+]

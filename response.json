@@ -1,0 +1,12 @@
+[
+    {
+        "created_at": "2023-06-08T09:19:48.199093Z",
+        "event_id": "1b2163b8-7b06-4ff4-a8c0-fb9f7de44b63",
+        "payload": {
+          "card_id": "x123",
+          "price_amount": 10.5,
+          "price_currency": "EUR"
+        },
+        "type": "PriceWasCalculated"
+      }
+]
