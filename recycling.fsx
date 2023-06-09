@@ -11,6 +11,7 @@ open Suave.Successful
 open Domain
 
 module Serialization =
+    open IdCard
     type Api = JsonProvider<"sample.json",SampleIsList = true>
     type ResponseApi = JsonProvider<"response.json", SampleIsList = true>
 
@@ -18,36 +19,38 @@ module Serialization =
         let json = Api.Parse(request)
         let command =
             match json.Command.Type with
-            | "CalculatePrice" ->  CalculatePrice
+            | "CalculatePrice" -> CalculatePrice
             | _ -> failwith "Unknown command"
         let events =
             [ for e in json.History  do 
-                match e.Type with
-                | "IdCardRegistered" -> 
-                    IdCardRegistered
-                        { Address = e.Payload.Address.Value
-                          City = City (e.Payload.City.Value)
-                          PersonId = e.Payload.PersonId.Value
-                                        }
-                | "IdCardScannedAtEntranceGate" ->
-                    IdCardScannedAtEntranceGate 
-                        { Date = e.Payload.Date.Value }
-                | "IdCardScannedAtExitGate" ->
-                    IdCardScannedAtExitGate
-                | "FractionWasDropped" ->
-                    FractionWasDropped {
-                        FractionType =
-                            match e.Payload.FractionType.Value with
-                            | "Construction waste" -> ConstructionWaste
-                            | "Green waste" -> GreenWaste
-                            | _ -> failwith "Unknown fraction type"
-                        Weight = e.Payload.Weight.Value
-                    }
-                | _ -> failwith "Unknown event"
+                let event =
+                    match e.Type with
+                    | "IdCardRegistered" -> 
+                        IdCardRegistered
+                            { Address = e.Payload.Address.Value
+                              City = City (e.Payload.City.Value)
+                              PersonId = e.Payload.PersonId.Value
+                                            }
+                    | "IdCardScannedAtEntranceGate" ->
+                        IdCardScannedAtEntranceGate 
+                            { Date = e.Payload.Date.Value }
+                    | "IdCardScannedAtExitGate" ->
+                        IdCardScannedAtExitGate
+                    | "FractionWasDropped" ->
+                        FractionWasDropped {
+                            FractionType =
+                                match e.Payload.FractionType.Value with
+                                | "Construction waste" -> ConstructionWaste
+                                | "Green waste" -> GreenWaste
+                                | _ -> failwith "Unknown fraction type"
+                            Weight = e.Payload.Weight.Value
+                        }
+                    | _ -> failwith "Unknown event"
+                CardId e.Payload.CardId, event
             ]
-        json.Command.Payload.CardId,  events, command
+        events, (CardId json.Command.Payload.CardId, command)
 
-    let serializeResponse cardId event =
+    let serializeResponse (CardId cardId,event) =
         match event with
         | PriceWasCalculated e ->
             let json = 
@@ -57,10 +60,11 @@ module Serialization =
                     payload = ResponseApi.Payload(cardId = cardId, priceAmount = e.Amount, priceCurrency = e.Currency), ``type`` = "PriceWasCalculated")
             string json
         | _ -> failwith "Event cannot be serialized"
-                
+
+open IdCard              
 // web server
 let handler (req: HttpRequest)  =
-    let cardId, events, command =
+    let events, command =
         req.rawForm
         |> Text.Encoding.UTF8.GetString 
         |> Serialization.parseRequest
@@ -68,7 +72,7 @@ let handler (req: HttpRequest)  =
     let state = List.fold evolve initialState events
     let newEvents = decide command state
     match List.tryHead newEvents with
-    | Some e -> OK (Serialization.serializeResponse cardId e)
+    | Some e -> OK (Serialization.serializeResponse e)
     | None -> OK ""
 
 

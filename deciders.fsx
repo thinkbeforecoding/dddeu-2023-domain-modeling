@@ -9,6 +9,35 @@ type Decider<'c, 'e, 'si, 'so> =
 
 type Decider<'c,'e,'s> = Decider<'c,'e,'s,'s>
 
+
+// takes a decider, and create a decider that can manage many instances
+// indexed by a string
+let many (decider: Decider<'c,'e,'s>) : Decider<'a * 'c, 'a * 'e, Map<'a,'s>> =
+    { decide =
+        fun (id, cmd) states ->
+            let state =
+                match Map.tryFind id states with
+                | Some s -> s
+                | None -> decider.initialState
+            let events = decider.decide cmd state
+            events |> List.map (fun e -> id, e)
+
+      evolve =
+        fun states (id, event) ->
+            let state =
+                match Map.tryFind id states with
+                | Some s -> s
+                | None -> decider.initialState
+            let newState =decider.evolve state event
+            Map.add id newState states
+
+      initialState = Map.empty
+
+      isTerminal =
+        fun states ->
+            Map.forall (fun _ s -> decider.isTerminal s) states
+    }
+
 let givenWhen decider = 
     fun events command ->
         events
